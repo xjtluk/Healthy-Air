@@ -1,8 +1,9 @@
 // lib/screens/settings_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../providers/air_quality_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -26,28 +27,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadSettings();
   }
 
+  // Load user settings from Firebase Firestore
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
-      _selectedUnit = prefs.getString('selected_unit') ?? 'AQI';
-      _updateFrequency = prefs.getString('update_frequency') ?? '1 hour';
-      _favoriteLocations = prefs.getStringList('favorite_locations') ?? [];
-    });
+    // Get the currently authenticated user
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // If not logged in, use default settings
+      setState(() {
+        _notificationsEnabled = true;
+        _selectedUnit = 'AQI';
+        _updateFrequency = '1 hour';
+        _favoriteLocations = [];
+      });
+      return;
+    }
+
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection('user_settings')
+        .doc(user.uid)
+        .get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      setState(() {
+        _notificationsEnabled = data?['notifications_enabled'] ?? true;
+        _selectedUnit = data?['selected_unit'] ?? 'AQI';
+        _updateFrequency = data?['update_frequency'] ?? '1 hour';
+        _favoriteLocations =
+            List<String>.from(data?['favorite_locations'] ?? []);
+      });
+    } else {
+      // Use default values if no settings exist
+      setState(() {
+        _notificationsEnabled = true;
+        _selectedUnit = 'AQI';
+        _updateFrequency = '1 hour';
+        _favoriteLocations = [];
+      });
+    }
   }
 
+  // Save user settings to Firebase Firestore
   Future<void> _saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('notifications_enabled', _notificationsEnabled);
-    await prefs.setString('selected_unit', _selectedUnit);
-    await prefs.setString('update_frequency', _updateFrequency);
-    await prefs.setStringList('favorite_locations', _favoriteLocations);
-    
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to save settings')),
+      );
+      return;
+    }
+    final settingsData = {
+      'notifications_enabled': _notificationsEnabled,
+      'selected_unit': _selectedUnit,
+      'update_frequency': _updateFrequency,
+      'favorite_locations': _favoriteLocations,
+    };
+
+    await FirebaseFirestore.instance
+        .collection('user_settings')
+        .doc(user.uid)
+        .set(settingsData, SetOptions(merge: true));
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('设置已保存')),
+      const SnackBar(content: Text('Settings saved')),
     );
   }
 
+  // Add favorite location and validate by fetching air quality data
   void _addFavoriteLocation() {
     if (_formKey.currentState!.validate()) {
       final city = _cityController.text.trim();
@@ -61,6 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  // Remove a favorite location
   void _removeFavoriteLocation(String location) {
     setState(() {
       _favoriteLocations.remove(location);
@@ -74,16 +121,268 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
+  // Build section title widget
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.blue,
+        ),
+      ),
+    );
+  }
+
+  // Show login/register dialog
+  void _showAuthDialog(BuildContext context, {bool isRegisterMode = false}) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Row(
+                children: [
+                  Icon(isRegisterMode ? Icons.person_add : Icons.login, color: Colors.blue),
+                  const SizedBox(width: 8),
+                  Text(isRegisterMode ? 'Register' : 'Login'),
+                ],
+              ),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          prefixIcon: Icon(Icons.email),
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: passwordController,
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: Icon(Icons.lock),
+                          border: OutlineInputBorder(),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
+                      ),
+                      if (!isRegisterMode)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => _showForgotPasswordDialog(context),
+                            child: const Text('Forgot Password?'),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      if (isRegisterMode) {
+                        await _registerUser(context, emailController.text.trim(), passwordController.text.trim());
+                      } else {
+                        await _loginUser(context, emailController.text.trim(), passwordController.text.trim());
+                      }
+                    }
+                  },
+                  child: Text(isRegisterMode ? 'Register' : 'Login'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isRegisterMode = !isRegisterMode; // 切换模式
+                    });
+                  },
+                  child: Text(isRegisterMode ? 'Switch to Login' : 'Switch to Register'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Register user
+  Future<void> _registerUser(BuildContext context, String email, String password) async {
+    try {
+      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final user = userCredential.user;
+      if (user != null) {
+        await user.sendEmailVerification();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Verification email sent. Please check your inbox.')),
+        );
+      }
+      Navigator.pop(context); // 关闭对话框
+    } catch (e) {
+      _handleAuthError(context, e);
+    }
+  }
+
+  // Login user
+  Future<void> _loginUser(BuildContext context, String email, String password) async {
+    try {
+      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final user = userCredential.user;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please verify your email before logging in.')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logged in successfully')),
+        );
+        setState(() {}); // 更新 UI
+      }
+      Navigator.pop(context); // 关闭对话框
+    } catch (e) {
+      _handleAuthError(context, e);
+    }
+  }
+
+  // Forgot password
+  void _showForgotPasswordDialog(BuildContext context) {
+    final emailController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Row(
+            children: const [
+              Icon(Icons.lock_reset, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('Reset Password'),
+            ],
+          ),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email),
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                return null;
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  try {
+                    await FirebaseAuth.instance.sendPasswordResetEmail(
+                      email: emailController.text.trim(),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Password reset email sent')),
+                    );
+                    Navigator.pop(context);
+                  } catch (e) {
+                    _handleAuthError(context, e);
+                  }
+                }
+              },
+              child: const Text('Send'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Handle authentication errors
+  void _handleAuthError(BuildContext context, dynamic error) {
+    String errorMessage = 'An error occurred';
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'weak-password':
+          errorMessage = 'The password is too weak.';
+          break;
+        case 'email-already-in-use':
+          errorMessage = 'The email is already in use.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'The email address is not valid.';
+          break;
+        case 'user-not-found':
+          errorMessage = 'No user found with this email.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'Incorrect password.';
+          break;
+        default:
+          errorMessage = error.message ?? 'An unknown error occurred.';
+      }
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('设置'),
+        title: const Text('Settings'),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: _saveSettings,
-            tooltip: '保存设置',
+            tooltip: 'Save Settings',
           ),
         ],
       ),
@@ -92,14 +391,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle('常规设置'),
+            // Login/Logout button
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (user == null) {
+                    // User not logged in, show login dialog
+                    _showAuthDialog(context);
+                  } else {
+                    // User logged in, perform logout
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Logged out successfully')),
+                      );
+                      setState(() {}); // Update UI
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Logout failed: $e')),
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: user == null ? Colors.blue : Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(user == null ? 'Login' : 'Logout'),
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            _buildSectionTitle('General Settings'),
             const SizedBox(height: 16),
-            
-            // 通知设置
+            // Notifications setting
             Card(
               child: SwitchListTile(
-                title: const Text('启用通知'),
-                subtitle: const Text('当空气质量发生显著变化时收到通知'),
+                title: const Text('Enable Notifications'),
+                subtitle: const Text('Receive alerts when air quality significantly changes'),
                 value: _notificationsEnabled,
                 onChanged: (value) {
                   setState(() {
@@ -108,10 +437,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
             ),
-            
             const SizedBox(height: 16),
-            
-            // 单位设置
+            // Unit selection setting
             Card(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -119,7 +446,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '显示单位',
+                      'Display Unit',
                       style: TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
@@ -133,7 +460,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           });
                         }
                       },
-                      items: <String>['AQI', 'CAQI', 'μg/m³']
+                      items: <String>['AQI', 'CAQI', 'µg/m³']
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -145,10 +472,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-            
             const SizedBox(height: 16),
-            
-            // 更新频率设置
+            // Update frequency setting
             Card(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -156,7 +481,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '数据更新频率',
+                      'Data Update Frequency',
                       style: TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
@@ -170,7 +495,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           });
                         }
                       },
-                      items: <String>['30 分钟', '1 小时', '3 小时', '6 小时']
+                      items: <String>['30 minutes', '1 hour', '3 hours', '6 hours']
+                          .toSet() // 去重，确保没有重复值
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -182,12 +508,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-            
             const SizedBox(height: 24),
-            _buildSectionTitle('收藏的位置'),
+            _buildSectionTitle('Favorite Locations'),
             const SizedBox(height: 16),
-            
-            // 添加收藏位置
+            // Add favorite location input
             Form(
               key: _formKey,
               child: Row(
@@ -196,13 +520,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: TextFormField(
                       controller: _cityController,
                       decoration: const InputDecoration(
-                        labelText: '城市名称',
-                        hintText: '输入城市名称',
+                        labelText: 'City Name',
+                        hintText: 'Enter city name',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return '请输入城市名称';
+                          return 'Please enter a city name';
                         }
                         return null;
                       },
@@ -210,46 +534,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(width: 16),
                   ElevatedButton(
-                    onPressed: _isLoading ? null : () async {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      
-                      try {
-                        final provider = Provider.of<AirQualityProvider>(context, listen: false);
-                        await provider.fetchAirQualityForCity(_cityController.text.trim());
-                        // If we reach here, the city is valid
-                        _addFavoriteLocation();
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('无法找到城市: ${e.toString()}')),
-                        );
-                      } finally {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      }
-                    },
+                    onPressed: _isLoading
+                        ? null
+                        : () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            try {
+                              final provider = Provider.of<AirQualityProvider>(context, listen: false);
+                              await provider.fetchAirQualityForCity(_cityController.text.trim());
+                              // If successful, add the city to favorites
+                              _addFavoriteLocation();
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('City not found: ${e.toString()}')),
+                              );
+                            } finally {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            }
+                          },
                     child: _isLoading
                         ? const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('添加'),
+                        : const Text('Add'),
                   ),
                 ],
               ),
             ),
-            
             const SizedBox(height: 16),
-            
-            // 收藏位置列表
+            // Favorite locations list
             if (_favoriteLocations.isEmpty)
               const Center(
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Text('暂无收藏的位置'),
+                  child: Text('No favorite locations.'),
                 ),
               )
             else
@@ -275,10 +598,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               try {
                                 final provider = Provider.of<AirQualityProvider>(context, listen: false);
                                 await provider.fetchAirQualityForCity(location);
-                                Navigator.pop(context); // Go back to home screen after fetching
+                                Navigator.pop(context);
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('更新失败: ${e.toString()}')),
+                                  SnackBar(content: Text('Update failed: ${e.toString()}')),
                                 );
                               } finally {
                                 setState(() {
@@ -297,18 +620,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 },
               ),
-            
             const SizedBox(height: 24),
-            _buildSectionTitle('关于应用'),
+            _buildSectionTitle('About the App'),
             const SizedBox(height: 16),
-            
-            // 关于和许可证
+            // About & License card
             Card(
               child: Column(
                 children: [
                   ListTile(
                     leading: const Icon(Icons.info_outline),
-                    title: const Text('关于 Healthy Air'),
+                    title: const Text('About Healthy Air'),
                     onTap: () {
                       Navigator.pushNamed(context, '/about');
                     },
@@ -316,22 +637,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.description_outlined),
-                    title: const Text('隐私政策'),
+                    title: const Text('Privacy Policy'),
                     onTap: () {
-                      // Show privacy policy
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('隐私政策'),
+                          title: const Text('Privacy Policy'),
                           content: const SingleChildScrollView(
                             child: Text(
-                              '我们非常重视您的隐私。应用需要位置权限以提供当前位置的空气质量数据。所有位置数据仅用于获取当地的空气质量信息，不会用于其他目的或与第三方共享。',
+                              'We value your privacy. The app requires location permission only to retrieve local air quality data and this information is not shared with third parties.',
                             ),
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('关闭'),
+                              child: const Text('Close'),
                             ),
                           ],
                         ),
@@ -341,44 +661,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.share_outlined),
-                    title: const Text('分享应用'),
+                    title: const Text('Share the App'),
                     onTap: () {
-                      // Implement share functionality
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('分享功能即将推出!')),
+                        const SnackBar(content: Text('Share functionality coming soon!')),
                       );
                     },
                   ),
                 ],
               ),
             ),
-            
             const SizedBox(height: 32),
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Clear all preferences (reset to default)
+                  // Reset settings (delete user settings document) after confirmation
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('重置设置'),
-                      content: const Text('确定要将所有设置重置为默认值吗？'),
+                      title: const Text('Reset Settings'),
+                      content: const Text('Are you sure you want to reset all settings to default?'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text('取消'),
+                          child: const Text('Cancel'),
                         ),
                         TextButton(
                           onPressed: () async {
-                            final prefs = await SharedPreferences.getInstance();
-                            await prefs.clear();
+                            final user = FirebaseAuth.instance.currentUser;
+                            if (user != null) {
+                              await FirebaseFirestore.instance
+                                  .collection('user_settings')
+                                  .doc(user.uid)
+                                  .delete();
+                            }
                             Navigator.pop(context);
                             _loadSettings(); // Reload default settings
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('所有设置已重置')),
+                              const SnackBar(content: Text('All settings reset')),
                             );
                           },
-                          child: const Text('确定'),
+                          child: const Text('Confirm'),
                         ),
                       ],
                     ),
@@ -388,24 +711,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   backgroundColor: Colors.red[100],
                   foregroundColor: Colors.red[900],
                 ),
-                child: const Text('重置所有设置'),
+                child: const Text('Reset All Settings'),
               ),
             ),
+            const SizedBox(height: 32),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.blue,
         ),
       ),
     );
