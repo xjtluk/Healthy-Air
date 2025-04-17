@@ -9,12 +9,14 @@ class AirQualityProvider with ChangeNotifier {
   
   AirQualityData? _airQualityData;
   String _currentCity = '';
+  String _formattedCity = ''; // Add this field for the formatted city name
   bool _isLoading = false;
   String? _error;
   
   // Getters
   AirQualityData? get airQualityData => _airQualityData;
   String get currentCity => _currentCity;
+  String get formattedCity => _formattedCity; // Add this getter for the formatted city name
   bool get isLoading => _isLoading;
   String? get error => _error;
   
@@ -28,7 +30,7 @@ class AirQualityProvider with ChangeNotifier {
       final position = await _locationService.getCurrentPosition();
       
       // Get city name from coordinates
-      _currentCity = await _locationService.getCityFromCoordinates(
+      final cityFromCoordinates = await _locationService.getCityFromCoordinates(
         position.latitude,
         position.longitude,
       );
@@ -38,7 +40,11 @@ class AirQualityProvider with ChangeNotifier {
         position.latitude,
         position.longitude,
       );
-      
+
+      // Use API-returned city name for _currentCity and format it for display
+      _currentCity = _airQualityData!.city; // Use API-returned city name for API requests
+      _formattedCity = _normalizeCityName(cityFromCoordinates); // Use geocoded city name for display
+
       _setLoading(false);
     } catch (e) {
       _setError('Initialization failed: $e');
@@ -53,12 +59,21 @@ class AirQualityProvider with ChangeNotifier {
     
     try {
       _airQualityData = await _apiService.getAirQualityByCity(city);
-      _currentCity = city;
+      _currentCity = city; // Keep the original city name for API requests
+      _formattedCity = _normalizeCityName(_airQualityData!.city); // Format city name for display
       _setLoading(false);
     } catch (e) {
       _setError('Failed to fetch data: $e');
       _setLoading(false);
     }
+  }
+
+  // Normalize city name format
+  String _normalizeCityName(String city) {
+    return city
+        .split(' ')
+        .map((word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}' : '')
+        .join(' ');
   }
   
   // Refresh current data

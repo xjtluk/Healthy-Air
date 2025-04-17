@@ -94,17 +94,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // Add favorite location and validate by fetching air quality data
-  void _addFavoriteLocation() {
+  void _addFavoriteLocation() async {
     if (_formKey.currentState!.validate()) {
-      final city = _cityController.text.trim();
+      final inputCity = _cityController.text.trim();
       setState(() {
-        if (!_favoriteLocations.contains(city)) {
-          _favoriteLocations.add(city);
-          _cityController.clear();
-        }
+        _isLoading = true;
       });
-      _saveSettings();
+      try {
+        final provider = Provider.of<AirQualityProvider>(context, listen: false);
+        await provider.fetchAirQualityForCity(inputCity); // Validate city by fetching data
+        if (provider.airQualityData != null) {
+          final apiCityName = provider.airQualityData!.city; // Use API-returned city name
+          final normalizedCityName = _normalizeCityName(apiCityName); // Normalize city name
+          if (!_favoriteLocations.contains(normalizedCityName)) {
+            setState(() {
+              _favoriteLocations.add(normalizedCityName); // Save normalized city name
+              _cityController.clear();
+            });
+            _saveSettings();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('$normalizedCityName has been added to your favorites')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('City is already in your favorites')),
+            );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please enter a valid city name')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter a valid city name')),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  // Normalize city name format
+  String _normalizeCityName(String city) {
+    return city
+        .split(' ')
+        .map((word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}' : '')
+        .join(' ');
   }
 
   // Remove a favorite location
