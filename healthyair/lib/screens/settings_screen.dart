@@ -305,7 +305,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (user != null && !user.emailVerified) {
         await user.sendEmailVerification();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please verify your email before logging in.')));
+          const SnackBar(content: Text('Please verify your email before logging in.')),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Logged in successfully')),
@@ -314,7 +315,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
       Navigator.pop(context); // 关闭对话框
     } catch (e) {
-      _handleAuthError(context, e);
+      if (e.toString().contains("type 'List<Object?>' is not a subtype of type 'PigeonUserDetails?")) {
+        // Treat this specific error as a successful login
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logged in successfully ')),
+        );
+        setState(() {}); // 更新 UI
+        Navigator.pop(context); // 关闭对话框
+      } else if (e is FirebaseAuthException) {
+        _handleAuthError(context, e);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login error: ${e.toString()}')),
+        );
+      }
     }
   }
 
@@ -443,6 +457,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Logged out successfully')),
                       );
+                      _loadSettings(); // Reset settings to default after logout
                       setState(() {}); // Update UI
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
