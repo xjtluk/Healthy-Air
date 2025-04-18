@@ -6,31 +6,29 @@ A real‑time air quality monitoring application built with Flutter, providing c
 
 ## Table of Contents
 
-1. [About](#about)  
-2. [Features](#features)  
-3. [Tech Stack](#tech-stack)  
-4. [Project Structure](#project-structure)  
-5. [Installation](#installation)  
-6. [Usage](#usage)  
-7. [Configuration](#configuration)  
-8. [Screenshots](#screenshots)  
-9. [Contributing](#contributing)  
-10. [License](#license)  
-11. [Contact](#contact)  
+1. [Stroyboard](#stroyboard)  
+2. [Features](#features)
+3. [Install The App](#install-the-app)
+4. [Tech Stack](#tech-stack)  
+5. [Project Structure](#project-structure)  
+6. [Installation](#installation)  
+7. [Usage](#usage)  
+8. [Configuration](#configuration)  
+9. [Screenshots](#screenshots)  
+10. [Contributing](#contributing)  
+11. [License](#license)  
+12. [Contact](#contact)  
 
 ---
 
-## About
+## Stroyboard
 
 **Healthy Air** is a cross‑platform Flutter app that fetches real‑time AQI and pollutant concentrations (PM2.5, PM10, O₃, NO₂, etc.) via the AQICN API. It auto‑detects user location, allows city look‑up, offers “shake to refresh,” and delivers personalized health recommendations. User settings and favorites are stored in Firebase Firestore.
 
 - Ideal for users who care about air quality, especially sensitive groups (children, elderly, respiratory patients).  
 - Provides timely health advice to help users take protective measures when air quality worsens.
----
 
----
 
-## Stroyboard
 ---
 
 
