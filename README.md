@@ -9,7 +9,7 @@ A real‑time air quality monitoring application built with Flutter, providing c
 1. [Stroyboard](#stroyboard)  
 2. [Features](#features)
 3. [Install The App](#install-the-app)
-4. [Tech Stack](#tech-stack)  
+4. [Project Tech Stack](#tech-stack)  
 5. [Project Structure](#project-structure)  
 6. [Installation](#installation)  
 7. [Usage](#usage)  
