@@ -1,5 +1,5 @@
 # Healthy Air
-
+<img src="healthyair/assets/logo.png" alt="Healthy Air Logo" width="200">
 A real‑time air quality monitoring application built with Flutter, providing current AQI data, pollutant breakdowns, and actionable health advice.
 
 ---
@@ -8,18 +8,20 @@ A real‑time air quality monitoring application built with Flutter, providing c
 
 1. [Stroyboard](#stroyboard)  
 2. [Features](#features)
-3. [Install The App](#install-the-app)
-4. [Project Tech Stack](#project-tech-stack)  
-5. [Project Structure](#project-structure)  
-6. [Install The Project](#install-the-project)  
-7. [Contact Details](#contact-details)  
+3. [Function Display](#function-display)
+4. [Install The App](#install-the-app)
+5. [Project Tech Stack](#project-tech-stack)  
+6. [Project Structure](#project-structure)  
+7. [Install The Project](#install-the-project)  
+8. [Contact Details](#contact-details)  
 
 ---
 
 ## Stroyboard
 
-**Healthy Air** is a cross‑platform Flutter app that fetches real‑time AQI and pollutant concentrations (PM2.5, PM10, O₃, NO₂, etc.) via the AQICN API. It auto‑detects user location, allows city look‑up, offers “shake to refresh,” and delivers personalized health recommendations. User settings and favorites are stored in Firebase Firestore.
+1.**Prototype Design**
 
+2.**Use Cases**
 - Ideal for users who care about air quality, especially sensitive groups (children, elderly, respiratory patients).  
 - Provides timely health advice to help users take protective measures when air quality worsens.
 
@@ -36,6 +38,10 @@ A real‑time air quality monitoring application built with Flutter, providing c
 - **Favorites & Settings**: Manage preferred cities, notification toggles, units, and update frequency—persisted in Firestore.  
 - **Pollutant Details**: In‑app guides on pollutant sources, risks, and mitigation.  
 - **About/Privacy**: App overview, data sources, privacy policy, and support contact.
+
+---
+
+## Function Display
 
 ---
 
