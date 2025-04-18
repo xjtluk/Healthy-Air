@@ -8,12 +8,14 @@ A real‑time air quality monitoring application built with Flutter, providing c
 
 1. [Stroyboard](#stroyboard)  
 2. [Features](#features)
-3. [Function Display](#function-display)
-4. [Install The App](#install-the-app)
-5. [Project Tech Stack](#project-tech-stack)  
-6. [Project Structure](#project-structure)  
-7. [Install The Project](#install-the-project)  
-8. [Contact Details](#contact-details)  
+3. [Install The App](#install-the-app)
+4. [Project Tech Stack](#project-tech-stack)  
+5. [Project Structure](#project-structure)
+6. [Data Collection & Management](#data-collection--management)  
+7. [Interactivity](#interactivity)  
+8. [Technical Integration](#technical-integration) 
+9. [Install The Project](#install-the-project)  
+10. [Contact Details](#contact-details)  
 
 ---
 
@@ -39,9 +41,6 @@ A real‑time air quality monitoring application built with Flutter, providing c
 - **Pollutant Details**: In‑app guides on pollutant sources, risks, and mitigation.  
 - **About/Privacy**: App overview, data sources, privacy policy, and support contact.
 
----
-
-## Function Display
 
 ---
 
@@ -69,6 +68,96 @@ lib/
 ```
 
 ---
+
+## Data Collection & Management
+
+### Data Collection
+
+- **Air Quality Data**  
+  Fetched from the AQICN API: AQI values, pollutant concentrations (PM2.5, PM10, O₃, NO₂, CO, etc.), plus the dominant pollutant.  
+- **Location Data**  
+  Device GPS determines current coordinates; reverse geocoding converts them into city names.  
+- **User Preferences**  
+  Notification settings, favorite cities, and update frequency are collected and stored per user.
+
+### Data Handling
+
+- **LocationService**  
+  Manages permissions, obtains coordinates, and reverse‑geocodes to city names.  
+- **ApiService**  
+  Interfaces with AQICN API to fetch data by city name or geo‑coordinates.  
+- **Error Handling**  
+  Catches API failures or permission issues, showing user‑friendly messages.
+
+### Data Management
+
+- **State Management**  
+  `AirQualityProvider` (via Provider) tracks data, user prefs, loading, and errors.  
+- **Persistent Storage**  
+  User settings and favorites are saved in Firebase Firestore, ensuring cross‑session persistence.
+
+---
+
+## Interactivity
+
+### User Interaction
+
+- **Shake to Refresh**  
+  Shake the device to reload air quality data.  
+- **Manual Refresh**  
+  Tap the refresh icon in the app bar.  
+- **My Location**  
+  A button fetches AQI for the current GPS location.  
+- **Favorites**  
+  Add, view, and remove favorite cities for quick access.
+
+### Dynamic UI
+
+- **Live Updates**  
+  The UI automatically reflects the latest data.  
+- **Pollutant Details**  
+  Tap any pollutant to see health effects and protective measures.  
+- **Settings**  
+  Customize notifications, units, and frequencies on the fly.
+
+### Feedback Mechanisms
+
+- **Snackbars**  
+  Notify users of actions (e.g., “Data refreshed,” “City added”).  
+- **Error Messages**  
+  Display failures (e.g., “Failed to fetch data”) with retry options.
+
+---
+
+## Technical Integration
+
+### AQICN API
+
+- Uses HTTP requests to pull live AQI data.  
+- Data is mapped into the `AirQualityData` model.
+
+### Firebase
+
+- **Authentication**  
+  Email/password sign‑in, registration, and password reset via Firebase Auth.  
+- **Firestore**  
+  Stores user settings (`user_settings/{uid}`) and favorites in structured documents.
+
+### Device Features
+
+- **Location**  
+  Geolocator & Geocoding for GPS and city name resolution.  
+- **Sensors**  
+  sensors_plus detects shake events to trigger refresh.
+
+### State & Error Resilience
+
+- Provider ensures UI stays in sync with backend.  
+- Catches and handles network, API, and permission errors gracefully.
+
+
+---
+
 
 ## Install The Project
 
