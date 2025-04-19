@@ -261,7 +261,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      isRegisterMode = !isRegisterMode; // 切换模式
+                      isRegisterMode = !isRegisterMode; // Switch mode
                     });
                   },
                   child: Text(isRegisterMode ? 'Switch to Login' : 'Switch to Register'),
@@ -288,7 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SnackBar(content: Text('Verification email sent. Please check your inbox.')),
         );
       }
-      Navigator.pop(context); // 关闭对话框
+      Navigator.pop(context); // Close dialog
     } catch (e) {
       _handleAuthError(context, e);
     }
@@ -311,17 +311,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Logged in successfully')),
         );
-        setState(() {}); // 更新 UI
+        setState(() {}); // Update UI
       }
-      Navigator.pop(context); // 关闭对话框
+      Navigator.pop(context); // Close dialog
     } catch (e) {
       if (e.toString().contains("type 'List<Object?>' is not a subtype of type 'PigeonUserDetails?")) {
         // Treat this specific error as a successful login
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Logged in successfully ')),
         );
-        setState(() {}); // 更新 UI
-        Navigator.pop(context); // 关闭对话框
+        setState(() {}); // Update UI
+        Navigator.pop(context); // Close dialog
       } else if (e is FirebaseAuthException) {
         _handleAuthError(context, e);
       } else {
@@ -549,7 +549,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         }
                       },
                       items: <String>['30 minutes', '1 hour', '3 hours', '6 hours']
-                          .toSet() // 去重，确保没有重复值
+                          .toSet() // Ensure no duplicate values
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,

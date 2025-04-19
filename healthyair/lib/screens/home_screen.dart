@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   double _lastX = 0, _lastY = 0, _lastZ = 0;
   int _shakeCount = 0;
-  final int _shakeThreshold = 3; // 降低灵敏度阈值
+  final int _shakeThreshold = 3; // Lower sensitivity threshold
 
   @override
   void initState() {
@@ -27,32 +27,26 @@ class _HomeScreenState extends State<HomeScreen> {
       provider.initializeLocationAndData();
     }
 
-    // 监听加速度传感器事件
+    // Listen to accelerometer events
     accelerometerEvents.listen((event) {
       final double deltaX = (event.x - _lastX).abs();
       final double deltaY = (event.y - _lastY).abs();
       final double deltaZ = (event.z - _lastZ).abs();
 
-      // 打印加速度数据到控制台
-      print('Accelerometer: x=${event.x}, y=${event.y}, z=${event.z}');
-      print('Delta: deltaX=$deltaX, deltaY=$deltaY, deltaZ=$deltaZ');
-
-      // 检测加速度变化是否超过阈值
+      // Detect if acceleration changes exceed the threshold
       if (deltaX > _shakeThreshold || deltaY > _shakeThreshold || deltaZ > _shakeThreshold) {
         _shakeCount++;
-        print('Shake count: $_shakeCount'); // 打印摇晃计数
 
-        if (_shakeCount >= 2) { // 检测到两次摇晃后触发刷新
-          _shakeCount = 0; // 重置摇晃计数
-          print('Shake detected! Refreshing data...'); // 打印检测到摇晃的日志
-          provider.refreshData();
+        if (_shakeCount >= 2) { // Reset shake count after detecting two shakes
+          _shakeCount = 0; // Reset shake count
+          Provider.of<AirQualityProvider>(context, listen: false).refreshData();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Shake detected! Refreshing data...')),
           );
         }
       }
 
-      // 更新上一次的加速度值
+      // Update the last acceleration values
       _lastX = event.x;
       _lastY = event.y;
       _lastZ = event.z;
@@ -67,16 +61,16 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const Icon(
               Icons.air,
-              color: Colors.white, // 改为纯白色
-              size: 32, // 增大图标大小
+              color: Colors.white, // Change to pure white
+              size: 32, // Increase icon size
             ),
             const SizedBox(width: 8),
             Text(
-              'Healthy Air',
+              'Enjoy Healthy Air',
               style: TextStyle(
-                fontSize: 24, // 增大字体大小
-                fontWeight: FontWeight.bold, // 增加字体粗细
-                color: Colors.white, // 改为纯白色
+                fontSize: 24, 
+                fontWeight: FontWeight.bold, 
+                color: Colors.white, 
               ),
             ),
           ],
