@@ -66,6 +66,10 @@ A real‑time air quality monitoring application built with Flutter, providing c
 - **Pollutant Details**: In‑app guides on pollutant sources, risks, and mitigation.  
 - **About/Privacy**: App overview, data sources, privacy policy, and support contact.
 
+### Video
+
+https://youtube.com/shorts/gQHsx5VQoMg?feature=share
+
 ### Screenshots
 
 **1.Boot Animation**  
