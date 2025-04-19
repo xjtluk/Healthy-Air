@@ -23,37 +23,35 @@ A real‑time air quality monitoring application built with Flutter, providing c
 
 1.**Prototype Design**
 
-<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/1.jpg" alt="Healthy Air Preview" width="40%">
-<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/2.jpg" alt="Healthy Air Preview" width="40%">
-<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/3.jpg" alt="Healthy Air Preview" width="40%">
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/1.jpg" alt="Healthy Air Preview" width="33%">
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/2.jpg" alt="Healthy Air Preview" width="30%">
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/3.jpg" alt="Healthy Air Preview" width="30%">
 
 2.**Use Cases**
 - Ideal for users who care about air quality, especially sensitive groups (children, elderly, respiratory patients).  
 - Provides timely health advice to help users take protective measures when air quality worsens.
 
-<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story1.jpg" alt="Healthy Air Preview" width="20%">
+<div style="display: flex; align-items: flex-start;">
+  <div style="margin-right: 20px; text-align: center;">
+    <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story1.jpg" alt="Story 1" width="180">
+    <p><strong>1. Father plans an outing but finds poor air quality</strong><br>🌀 "What was supposed to be a sunny outing turned into a gloomy sight outside the window. Father frowned, concerned about the family's health and safety."</p>
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story2.jpg" alt="Story 2" width="180">
+    <p><strong>2. Father checks his phone for air quality information</strong><br>📱 "The air quality warning flashed red, and Father stared at the phone screen, quickly assessing the situation."</p>
+  </div>
+</div>
 
-1. Father plans an outing but finds poor air quality  
-
-🌀 "What was supposed to be a sunny outing turned into a gloomy sight outside the window. Father frowned, concerned about the family's health and safety."
-
-<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story2.jpg" alt="Healthy Air Preview" width="20%">
-
-2. Father checks his phone for air quality information  
-
-📱 "The air quality warning flashed red, and Father stared at the phone screen, quickly assessing the situation."
-
-<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story3.jpg" alt="Healthy Air Preview" width="20%">
-
-3. Father searches for a city with better air quality  
-
-🗺️ "Hope appeared at his fingertips as he scrolled through the map, searching for the bluest skies suitable for breathing."
-
-<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story4.jpg" alt="Healthy Air Preview" width="20%">
-
-4. The whole family plays on a fresh-air lawn  
-   
-🌿 "Sunshine bathed the grassy field, and laughter echoed through the fresh air. The family found true relaxation and joy in nature."
+<div style="display: flex; align-items: flex-start; margin-top: 20px;">
+  <div style="margin-right: 20px; text-align: center;">
+    <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story3.jpg" alt="Story 3" width="180">
+    <p><strong>3. Father searches for a city with better air quality</strong><br>🗺️ "Hope appeared at his fingertips as he scrolled through the map, searching for the bluest skies suitable for breathing."</p>
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story4.jpg" alt="Story 4" width="180">
+    <p><strong>4. The whole family plays on a fresh-air lawn</strong><br>🌿 "Sunshine bathed the grassy field, and laughter echoed through the fresh air. The family found true relaxation and joy in nature."</p>
+  </div>
+</div>
 
 ---
 
@@ -190,7 +188,7 @@ lib/
 
 1. **Clone**  
    ```bash
-   git clone https://github.com/YourUsername/healthy_air.git
+   git clone https://github.com/xjtluk/Healthy-Air.git
    cd healthy_air
    ```
 2. **Dependencies**
