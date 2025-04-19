@@ -66,6 +66,29 @@ A real‑time air quality monitoring application built with Flutter, providing c
 - **Pollutant Details**: In‑app guides on pollutant sources, risks, and mitigation.  
 - **About/Privacy**: App overview, data sources, privacy policy, and support contact.
 
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen1.png" alt="Healthy Air Preview" width="15%">
+1. Boot animation.
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen2.png" alt="Healthy Air Preview" width="15%">
+
+2.The top left is the soft glue slogan, and the right three buttons are used to refresh the data, relocate to the current city, and jump to the Settings page. The middle shows the name of the city, the time of data acquisition, and the overall air quality assessment. At the bottom is the pollutant card.
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen3.png" alt="Healthy Air Preview" width="15%"> <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen4.png" alt="Healthy Air Preview" width="15%">
+
+3. The pollutant card contains the data of PM2.5, PM10, O3, NO2, SO2 and CO, respectively. Also use colors to highlight status: blue is very good, green is good, yellow is medium, orange is slightly polluted, red is unhealthy, and purple is dangerous.
+   When the user clicks on the pollutant card, the software will make a prompt based on the current data. In addition, you can continue to click to jump to the contaminant details page.
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen5.png" alt="Healthy Air Preview" width="15%"> <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen6.png" alt="Healthy Air Preview" width="15%"> <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen7.png" alt="Healthy Air Preview" width="15%">
+
+4. The Contaminant detail page describes the definition, sources, hazards and protection measures of each contaminant in detail. At the same time, it will also popularize the harm degree of different data corresponding to different pollutants.
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen8.png" alt="Healthy Air Preview" width="15%">
+
+5. In the Settings page, users can manage their personal Settings. First, you need to log into your account to set up your personal Settings. Log in and you'll see your saved personality Settings. Including whether to prompt, data units, data refresh frequency. In addition, the following search box can be used to learn about the air quality data of other cities, and each time you log in to the account, you can find your preferred city. Select your preferences and click the upper right corner to save.
+
+
+ <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen9.png" alt="Healthy Air Preview" width="15%">
+6. These are a few introductions about the software including product descriptions, user privacy, etc.
 
 ---
 
