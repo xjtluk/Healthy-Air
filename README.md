@@ -23,10 +23,37 @@ A real‑time air quality monitoring application built with Flutter, providing c
 
 1.**Prototype Design**
 
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/1.jpg" alt="Healthy Air Preview" width="40%">
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/2.jpg" alt="Healthy Air Preview" width="40%">
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/3.jpg" alt="Healthy Air Preview" width="40%">
+
 2.**Use Cases**
 - Ideal for users who care about air quality, especially sensitive groups (children, elderly, respiratory patients).  
 - Provides timely health advice to help users take protective measures when air quality worsens.
 
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story1.jpg" alt="Healthy Air Preview" width="20%">
+
+1. Father plans an outing but finds poor air quality  
+
+🌀 "What was supposed to be a sunny outing turned into a gloomy sight outside the window. Father frowned, concerned about the family's health and safety."
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story2.jpg" alt="Healthy Air Preview" width="20%">
+
+2. Father checks his phone for air quality information  
+
+📱 "The air quality warning flashed red, and Father stared at the phone screen, quickly assessing the situation."
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story3.jpg" alt="Healthy Air Preview" width="20%">
+
+3. Father searches for a city with better air quality  
+
+🗺️ "Hope appeared at his fingertips as he scrolled through the map, searching for the bluest skies suitable for breathing."
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/story4.jpg" alt="Healthy Air Preview" width="20%">
+
+4. The whole family plays on a fresh-air lawn  
+   
+🌿 "Sunshine bathed the grassy field, and laughter echoed through the fresh air. The family found true relaxation and joy in nature."
 
 ---
 
