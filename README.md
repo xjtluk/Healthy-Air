@@ -2,7 +2,8 @@
 <img src="healthyair/assets/logo.png" alt="Healthy Air Logo" width="200">
 A real‑time air quality monitoring application built with Flutter, providing current AQI data, pollutant breakdowns, and actionable health advice.
 
-**Landing page**
+
+**Landing page:**
 [Ideal for users who care about air quality, especially sensitive groups (children, elderly, respiratory patients).](https://xjtluk.github.io/Healthy-Air/landingpage/)  
 
 ---
