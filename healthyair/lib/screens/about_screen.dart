@@ -19,18 +19,10 @@ class AboutScreen extends StatelessWidget {
               child: Column(
                 children: [
                   // App logo
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.air_outlined,
-                      size: 70,
-                      color: Colors.blue,
-                    ),
+                  Image.asset(
+                    'assets/logo.png', 
+                    width: 100,
+                    height: 100,
                   ),
                   const SizedBox(height: 16),
                   const Text(
