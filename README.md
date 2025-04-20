@@ -108,7 +108,21 @@ The app provides product descriptions, user privacy information, and other detai
 ---
 
 ## Install The App
+
+**Step 1** 
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/s1.png" alt="Boot Animation" width="20%">  
+
+On the right, find the built project.
+
+**Step 2** 
+
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/s2.png" alt="Boot Animation" width="20%">  
+
+Find the built apk and download it.
+
 ---
+
 ## Project Tech Stack
 
 - **Frontend**: Flutter  
