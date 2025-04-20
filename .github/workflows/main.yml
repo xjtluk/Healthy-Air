@@ -1,17 +1,17 @@
+
 name: Flutter Build and Upload Android APK
 
 on:
-  push:                 # This is the condition that the action will run on
-    branches: [ main ]  # In this case when you push your code into GitHub
+  push:
+    branches: [ main ]
     # tags:
-    # - "v*.*.*"          # In this case when you tag your commit with v1.0.0 for example
+    # - "v*.*.*"
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # This is the type of machine we want to run the action on
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -27,43 +27,47 @@ jobs:
 
       - name: Get pubspec version
         id: get_flutter_app_version
+        working-directory: ./healthyair
         run: |
-          VERSION=$(yq .version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' pubspec.yaml | head -n 1)
+          VERSION=$(yq .version pubspec.yaml | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
           echo "TAG_VERSION=$VERSION" >> $GITHUB_OUTPUT
-  
+
       - name: Create git tag
         run: |
           git tag "v${{ steps.get_flutter_app_version.outputs.TAG_VERSION }}"
 
-      - name: Install Flutter          
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'main'
 
-      - name: Get Flutter dependencies    
+      - name: Get Flutter dependencies
+        working-directory: ./healthyair
         run: flutter pub get
 
-      - name: Build APK Release             
+      - name: Build APK Release
+        working-directory: ./healthyair
         run: flutter build apk --release
 
-      - name: Build an AppBundle          
+      - name: Build an AppBundle
+        working-directory: ./healthyair
         run: flutter build appbundle --release
 
       - name: Save APK to Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: flutter-apk
-          path: build/app/outputs/flutter-apk/*.apk
+          path: healthyair/build/app/outputs/flutter-apk/*.apk
 
       - name: Save APPBUNDLE to Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: flutter-appbundle
-          path: build/app/outputs/bundle/release/*.aab
+          path: healthyair/build/app/outputs/bundle/release/*.aab
 
       - name: Create Github Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/bundle/release/*.aab,build/app/outputs/flutter-apk/*.apk"
+          artifacts: "healthyair/build/app/outputs/bundle/release/*.aab,healthyair/build/app/outputs/flutter-apk/*.apk"
           tag: "v${{ steps.get_flutter_app_version.outputs.TAG_VERSION }}"
           # token: ${{ secrets.PERSONAL_RELEASE_TOKEN }}
