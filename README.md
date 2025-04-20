@@ -66,6 +66,40 @@ A real‑time air quality monitoring application built with Flutter, providing c
 - **Pollutant Details**: In‑app guides on pollutant sources, risks, and mitigation.  
 - **About/Privacy**: App overview, data sources, privacy policy, and support contact.
 
+### Video
+
+https://youtube.com/shorts/gQHsx5VQoMg?feature=share
+
+### Screenshots
+
+**1.Boot Animation**  
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen1.png" alt="Boot Animation" width="15%">  
+The app starts with a visually appealing boot animation.
+
+
+**2.Main Screen Overview**  
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen2.png" alt="Main Screen" width="15%">  
+The top-left displays the slogan, while the right three buttons are used for refreshing data, relocating to the current city, and navigating to the Settings page. The middle section shows the city name, time of data acquisition, and overall air quality assessment. The bottom section contains pollutant cards.
+
+
+**3. Pollutant Card Details**  
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen3.png" alt="Pollutant Card" width="15%"> <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen4.png" alt="Pollutant Card Expanded" width="15%">  
+Each pollutant card displays data for PM2.5, PM10, O3, NO2, SO2, and CO. Colors highlight the status: blue (very good), green (good), yellow (medium), orange (slightly polluted), red (unhealthy), and purple (dangerous). Clicking on a pollutant card provides prompts based on current data and allows navigation to the contaminant details page.
+
+
+**4. Contaminant Details Page**  
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen5.png" alt="Contaminant Details 1" width="15%"> <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen6.png" alt="Contaminant Details 2" width="15%"> <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen7.png" alt="Contaminant Details 3" width="15%">  
+Provides detailed information about each contaminant, including definition, sources, hazards, and protection measures. Explains the harm degree corresponding to different data levels for each pollutant.
+
+
+**5. Settings Page**  
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen10.png" alt="Settings 1" width="15%"> <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen11.png" alt="Settings 2" width="15%"> <img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen8.png" alt="Settings 3" width="15%">  
+Users can manage personal settings after logging into their account: enable/disable prompts, adjust data units, and set data refresh frequency. The search box allows users to check air quality in other cities. Saved preferences, including favorite cities, are displayed upon login.
+
+
+**6. Additional Information**  
+<img src="https://github.com/xjtluk/Healthy-Air/blob/main/Resources/screen9.png" alt="Additional Info" width="15%">  
+The app provides product descriptions, user privacy information, and other details.
 
 ---
 
